@@ -33,6 +33,7 @@ def racine_arrondi_dicho(nombre, decimales = 5):
   # print(min, min*min, nombre)
   return min
 
+
 def _partieEntiere(nombre):
   res = 0
   # partie entière
@@ -41,21 +42,50 @@ def _partieEntiere(nombre):
   if (res*res) == nombre: return res
   return res - 1
 
-def racine_arrondi_chiffres(nombre, decimales = 5):
-  if nombre == 0: return 1
-  if nombre == 1: return 1
-  res = _partieEntiere(nombre)
-  if (res * res) == nombre: return res  # gère les racines entières
-  # partie entière
-  for position in range(2, decimales + 1):
-    if (res * res) == nombre:
-      return res
-    prochain_chiffre = _trouver_prochain_chiffre(nombre, res, position)
-    #if prochain_chiffre == 0 and res == prochain_chiffre * 10 ** -(position-1) + res:
-    #  return res  # si le chiffre est 0 ou si j'ai atteint la limite de précision float
-    res += prochain_chiffre * 10 ** -(position-1)
+def racine_arrondi_chiffres(nombre, decimales=5):
+  # Handle negative numbers immediately
+  if nombre < 0:
+    return -1.0
+  if nombre == 0: return 0.0
+  # 1. Approach the integer part (by under)
+  integer_part = 0
+  while (integer_part + 1) ** 2 <= nombre:
+    integer_part += 1
 
-  return round(res, decimales)
+  current_value = float(integer_part)
+
+  # 2. Approach each decimal place by testing 0 through 9
+  for position in range(1, decimales + 1):
+    step = 10 ** (-position)
+
+    # Test increments from 1 to 9 for the current decimal place
+    for digit in range(1, 11):
+      next_value = current_value + step
+
+      if next_value ** 2 <= nombre:
+        current_value = next_value
+      else:
+        # As soon as it exceeds, we stop incrementing this decimal place
+        break
+
+  # Rounding to the requested number of decimals to avoid floating-point artifacts
+  return round(current_value, decimales)
+
+# def racine_arrondi_chiffres(nombre, decimales = 5):
+#   if nombre == 0: return 1
+#   if nombre == 1: return 1
+#   res = _partieEntiere(nombre)
+#   if (res * res) == nombre: return res  # gère les racines entières
+#   # partie entière
+#   for position in range(2, decimales + 1):
+#     if (res * res) == nombre:
+#       return res
+#     prochain_chiffre = _trouver_prochain_chiffre(nombre, res, position)
+#     #if prochain_chiffre == 0 and res == prochain_chiffre * 10 ** -(position-1) + res:
+#     #  return res  # si le chiffre est 0 ou si j'ai atteint la limite de précision float
+#     res += prochain_chiffre * 10 ** -(position-1)
+#
+#   return round(res, decimales)
 
 def _trouver_prochain_chiffre(nombre, base, position):
   for i in range(1, 10):
@@ -110,4 +140,4 @@ def racine(nombre):
     # print(min, max)
   # print(min, min*min, nombre)
   return min
-  	 		  	  	 		  	    				 		 	 		     	
+ 	    	 		   		  						 				 	  	   	  			 	       	      	 
